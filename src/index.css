@@ -1,5 +1,8 @@
 body {
   margin: 0;
+  padding: 0;
+  background-color: #343541;
+
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
@@ -10,4 +13,185 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+.main {
+  padding-top: 0px;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+.side-bar {
+  padding-top: 100px;
+  background-color: #202123;
+  height: 100vh;
+  width: 244px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.app {
+  background-color: #343541;
+  display: flex;
+}
+button {
+  border: solid 0.5px rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  color: azure;
+}
+.nav {
+  border: solid 0.5px rgba(255, 255, 255, 0.5);
+  padding: 10px;
+  margin: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.history {
+  padding: 10px;
+  margin: 10px;
+  height: 100%;
+}
+.history li {
+  list-style-type: none;
+  padding: 15px 0;
+  cursor: pointer;
+}
+.input-container {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+}
+input {
+  border: none;
+  width: 100%;
+  font-size: 20px;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 12px 15px;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0 54px 55px, rgba(0, 0, 0, 0.05) 0 -12px 30px,
+    rgba(0, 0, 0, 0.05) 0 4px 6px, rgba(0, 0, 0, 0.05) 0 12px 3px,
+    rgba(0, 0, 0, 0.05) 0 -3px 5px;
+}
+.input:focus {
+  outline: none;
+}
+#submit {
+  position: absolute;
+  bottom: 15px;
+  right: 0;
+  cursor: pointer;
+}
+.bottom-section {
+  padding-bottom: 50%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.add-job-form {
+  background-color: #000; /* Set your desired background color */
+  color: white; /* Text color */
+  padding: 20px; /* Add padding as needed */
+}
+
+.add-job-form h2 {
+  font-size: 2.5rem; /* Header text size */
+  color: white;
+}
+
+.form-field {
+  margin-bottom: 20px; /* Add space between form fields */
+}
+
+.form-field label {
+  display: block; /* Display labels on top of input fields */
+  font-weight: bold; /* Make labels bold */
+  margin-bottom: 5px; /* Add space between label and input field */
+}
+.form-field input {
+  width: 100%; /* Make input fields 100% width */
+  padding: 5px; /* Add padding to input fields */
+  color: #f9f9f9;
+}
+
+/* JobApplicationForm.css */
+
+form {
+  width: 80%;
+  max-width: 600px;
+  margin: 2em auto;
+  padding: 2em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: "Arial", sans-serif;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+textarea {
+  resize: vertical;
+  height: 100px;
+}
+
+button {
+  padding-top: 30px;
+  padding: 0.7em 1.5em;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+div {
+  font-family: Arial, sans-serif;
+}
+
+.ResumeFormContainer {
+  position: relative;
+  z-index: 1;
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 200px;
+}
+
+.OriginalResume {
+  /* background-color: #fff; */
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 200px;
+
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
 }

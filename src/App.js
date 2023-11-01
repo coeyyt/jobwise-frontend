@@ -1,20 +1,23 @@
-import React from "react";
-import logo from "./logo.png";
-import "./App.css";
+import { Routes, Route } from "react-router-dom";
+// import HomePage from "./Pages/HomePage";
+import CustomizedResumePage from "./Pages/CustomizedResumePage";
+import ResumePage from "./Pages/ResumePage";
+import Navbar from "./Components/Navbar";
 
-class App extends React.Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-        </header>
-      </div>
-    );
-  }
+function App() {
+  return (
+    <div className="app">
+      <header>
+        <Navbar />
+        <Routes>
+          <Route path="/customresume" element={<CustomizedResumePage />} />
+          <Route path="/" element={<ResumePage />} />
+
+          {/* <Route path="/" element={<HomePage />} /> */}
+        </Routes>
+      </header>
+    </div>
+  );
 }
 
 export default App;
