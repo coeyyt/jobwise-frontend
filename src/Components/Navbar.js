@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { BACKEND_URL } from "../constants";
+
+import axios from "axios";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -18,8 +21,48 @@ import AdbIcon from "@mui/icons-material/Adb";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 
 const Navbar = (props) => {
-  const { loginWithRedirect, logout, isAuthenticated, user, isLoading } =
-    useAuth0();
+  const {
+    loginWithRedirect,
+    logout,
+    isAuthenticated,
+    user,
+    isLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
+  console.log("Authentication Status:", isAuthenticated);
+  console.log("User Data:", user);
+
+  useEffect(() => {
+    const registerUser = async () => {
+      if (!isAuthenticated || !user) {
+        console.log("User is not authenticated or user data is not available.");
+        return;
+      }
+
+      try {
+        const accessToken = await getAccessTokenSilently();
+        console.log("Access Token:", accessToken);
+
+        await axios.post(
+          `${BACKEND_URL}/users`,
+          {
+            auth0_user_id: user.sub,
+            email: user.email,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log("User registered/updated");
+      } catch (error) {
+        console.error("Error registering user:", error);
+      }
+    };
+
+    registerUser();
+  }, [isAuthenticated, user, getAccessTokenSilently]);
 
   // const pages = ["Home", "Resume", "Custom"];
   // const pagesRoute = { Home: "/", Resume: "/resume", Custom: "/customresume" };
@@ -134,10 +177,11 @@ const Navbar = (props) => {
 
           {/* Open settings */}
           <Box sx={{ flexGrow: 0 }}>
-            {props.user?.name}{" "}
+            {user?.sub}
+            {user?.email}{" "}
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={props.user?.name} src={props.user?.picture} />
+                <Avatar alt={user?.email} src={user?.picture} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -169,9 +213,8 @@ const Navbar = (props) => {
               )}
               {isAuthenticated && (
                 <div>
-                  <img src={user.picture} alt={user.name} />
-                  <h2>{user.name}</h2>
-                  <p>{user.email}</p>
+                  <img src={user.picture} alt={user?.email} />
+                  <p>{user?.email} </p>
                 </div>
               )}
               {settings.map((setting) => (

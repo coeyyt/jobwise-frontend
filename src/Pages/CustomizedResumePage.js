@@ -15,17 +15,25 @@ const CustomizedResumePage = () => {
   const [jdFormHistory, setJdFormHistory] = useState([]);
 
   const fetchCustomizedResume = async ({ jdFormId }) => {
+    if (!jdFormId) {
+      console.error("jdFormId is undefined. Skipping fetch.");
+      return;
+    }
     try {
       const response = await axios.get(
         `${BACKEND_URL}/customizedresumes/${jdFormId}`
       );
       if (response.status === 200) {
         console.log("Fetched Customized Resume:", response.data);
-        setResumeContent(response.data.content); // Assuming the data structure contains content key
+        setResumeContent(response.data.content);
       }
     } catch (error) {
       console.error("Error fetching customized resume:", error);
     }
+  };
+
+  const addNewJDToHistory = (newJDForm) => {
+    setJdFormHistory((prevJDForms) => [...prevJDForms, newJDForm]);
   };
 
   const fetchJDForms = async () => {
@@ -64,7 +72,10 @@ const CustomizedResumePage = () => {
 
         <Dialog open={isFormVisible} onClose={() => setIsFormVisible(false)}>
           <DialogContent>
-            <JDForm setResumeResponse={setResumeContent} />
+            <JDForm
+              setResumeResponse={setResumeContent}
+              addNewJDToHistory={addNewJDToHistory}
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setIsFormVisible(false)} color="primary">

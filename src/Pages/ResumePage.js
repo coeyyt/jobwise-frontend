@@ -27,58 +27,59 @@
 //   );
 // };
 // export default ResumePage;
+import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-
-import { React, useState, useEffect } from "react";
-import ResumeForm from "../Components/ResumeForm";
-import { BACKEND_URL } from "../constants.js";
 import axios from "axios";
+import ResumeForm from "../Components/ResumeForm";
+import { BACKEND_URL } from "../constants";
 
 const ResumePage = () => {
-  const [resumes, setResumes] = useState([]);
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const { user } = useAuth0();
+  const [resume, setResume] = useState(null);
+  const { user, isAuthenticated } = useAuth0();
+
   useEffect(() => {
-    // Check if the form has been submitted before from local storage
-    const formStatus = localStorage.getItem("formSubmitted");
-    if (formStatus) {
-      setFormSubmitted(true);
+    if (isAuthenticated && user) {
+      fetchResume();
     }
-  }, []);
+  }, [user, isAuthenticated]);
 
-  useEffect(() => {
-    setFormSubmitted(false); // Reset the formSubmitted state when user changes
-  }, [user]);
-
-  useEffect(() => {
-    getResume();
-  }, [formSubmitted]);
-
-  const getResume = async () => {
-    const response = await axios.get(`${BACKEND_URL}/resumes/1`);
-    setResumes([response.data]);
-    console.log(response.data);
+  const fetchResume = async () => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/resumes/user/${user.sub}`
+      );
+      if (response.data) {
+        setResume(response.data);
+      }
+    } catch (err) {
+      console.error("Error fetching resume:", err);
+      // Handle no resume found or other errors
+    }
   };
 
-  const handleFormSubmit = () => {
-    // Set formSubmitted state to true
-    setFormSubmitted(true);
-    // Store the form submission status to local storage
-    localStorage.setItem("formSubmitted", "true");
+  const handleFormSubmit = async (resumeData) => {
+    // Handle resume form submission
+    try {
+      await axios.post(`${BACKEND_URL}/resumes`, {
+        ...resumeData,
+        user_auth0_user_id: user.sub,
+      });
+      fetchResume(); // Re-fetch the resume
+    } catch (err) {
+      console.error("Error submitting resume:", err);
+      // Handle submission error
+    }
   };
-
-  const originalResume = formSubmitted ? (
-    <div className="OriginalResume">{resumes[0]?.resume_content}</div>
-  ) : null;
 
   return (
     <div>
-      {!formSubmitted && (
+      {resume ? (
+        <div className="OriginalResume">{resume.resume_content}</div>
+      ) : (
         <div className="ResumeFormContainer">
           <ResumeForm onFormSubmit={handleFormSubmit} />
         </div>
       )}
-      {originalResume}
     </div>
   );
 };

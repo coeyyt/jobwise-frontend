@@ -1,43 +1,42 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
-import { useAuth0 } from "@auth0/auth0-react"; // Import the hook from Auth0
+import { useAuth0 } from "@auth0/auth0-react";
 
 const JDForm = ({ setResumeResponse }) => {
   const [company_name, setcompanyName] = useState("");
   const [job_title, setjobTitle] = useState("");
   const [job_description, setjobDescription] = useState("");
-  const [resume_id, setresumeId] = useState("");
-
-  const { isAuthenticated, loginWithRedirect } = useAuth0(); // Destructure methods from Auth0
+  const { isAuthenticated, user, loginWithRedirect } = useAuth0();
 
   const handleChange = (event) => {
-    switch (event.target.name) {
-      case "company_name":
-        setcompanyName(event.target.value);
-        break;
-      case "job_title":
-        setjobTitle(event.target.value);
-        break;
-      case "job_description":
-        setjobDescription(event.target.value);
-        break;
-      case "resume_id":
-        setresumeId(event.target.value);
-        break;
-      default:
-    }
+    const { name, value } = event.target;
+    if (name === "company_name") setcompanyName(value);
+    else if (name === "job_title") setjobTitle(value);
+    else if (name === "job_description") setjobDescription(value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
 
-      // Send post req
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
+
+    try {
+      // Fetch the resume ID based on the Auth0 user ID
+      console.log(
+        "Making request to URL:",
+        `${BACKEND_URL}/resumes/id/user/${user.sub}`
+      );
+
+      const resumeResponse = await axios.get(
+        `${BACKEND_URL}/resumes/id/user/${user.sub}`
+      );
+      const resume_id = resumeResponse.data.resume_id;
+      console.log("Resume id from backend", resume_id);
+      // Send post request for job application
       const response = await axios.post(`${BACKEND_URL}/jobapplications`, {
         company_name,
         job_title,
@@ -49,18 +48,19 @@ const JDForm = ({ setResumeResponse }) => {
       if (response.data && response.data.customizedResume) {
         setResumeResponse(response.data.customizedResume);
       }
-      console.log(
-        "customized resume from backend:",
-        response.data.customizedResume
-      );
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching resume ID:", err);
+      if (err.response) {
+        // The server responded with a status code outside the 2xx range
+        console.error("Response data:", err.response.data);
+        console.error("Response status:", err.response.status);
+      }
     }
 
+    // Reset form fields
     setcompanyName("");
     setjobTitle("");
     setjobDescription("");
-    setresumeId("");
   };
 
   return (
@@ -68,9 +68,9 @@ const JDForm = ({ setResumeResponse }) => {
       <h2>Add Job</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-field">
-          <label>Comapny Name:</label>
+          <label>Company Name:</label>
           <input
-            type="string"
+            type="text"
             name="company_name"
             value={company_name}
             onChange={handleChange}
@@ -80,7 +80,7 @@ const JDForm = ({ setResumeResponse }) => {
         <div className="form-field">
           <label>Job Title:</label>
           <input
-            type="string"
+            type="text"
             name="job_title"
             value={job_title}
             onChange={handleChange}
@@ -89,23 +89,15 @@ const JDForm = ({ setResumeResponse }) => {
         </div>
 
         <div className="form-field">
-          <label>Job Description</label>
+          <label>Job Description:</label>
           <input
-            type="string"
+            type="text"
             name="job_description"
             value={job_description}
             onChange={handleChange}
           />
         </div>
-        <div className="form-field">
-          <label>resumeId</label>
-          <input
-            type="number"
-            name="resume_id"
-            value={resume_id}
-            onChange={handleChange}
-          />
-        </div>
+
         <div className="form-field">
           <input type="submit" value="Submit" />
         </div>
