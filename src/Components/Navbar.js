@@ -64,14 +64,14 @@ const Navbar = (props) => {
     registerUser();
   }, [isAuthenticated, user, getAccessTokenSilently]);
 
-  // const pages = ["Home", "Resume", "Custom"];
-  // const pagesRoute = { Home: "/", Resume: "/resume", Custom: "/customresume" };
-  const pages = ["Resume", "Custom"];
+  const pages = ["Home", "Resume", "Custom"];
+  const pagesRoute = { Home: "/", Resume: "/resume", Custom: "/customresume" };
+  // const pages = ["Resume", "Custom"];
 
-  const pagesRoute = {
-    Resume: "/",
-    Custom: "/customresume",
-  };
+  // const pagesRoute = {
+  //   Resume: "/",
+  //   Custom: "/customresume",
+  // };
 
   const settings = ["Logout"];
 
