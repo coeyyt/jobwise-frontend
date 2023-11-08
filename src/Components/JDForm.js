@@ -7,6 +7,9 @@ const JDForm = ({ setResumeResponse }) => {
   const [company_name, setcompanyName] = useState("");
   const [job_title, setjobTitle] = useState("");
   const [job_description, setjobDescription] = useState("");
+  const [submissionStatus, setSubmissionStatus] = useState(false); // New state variable
+  const [isLoading, setIsLoading] = useState(false);
+
   const { isAuthenticated, user, loginWithRedirect } = useAuth0();
 
   const handleChange = (event) => {
@@ -21,8 +24,11 @@ const JDForm = ({ setResumeResponse }) => {
 
     if (!isAuthenticated) {
       loginWithRedirect();
+      setIsLoading(true); // Set loading to true when starting the request
+
       return;
     }
+    setIsLoading(true); // Set loading to true when starting the request
 
     try {
       // Fetch the resume ID based on the Auth0 user ID
@@ -36,13 +42,16 @@ const JDForm = ({ setResumeResponse }) => {
       );
       const resume_id = resumeResponse.data.resume_id;
       console.log("Resume id from backend", resume_id);
+
       // Send post request for job application
       const response = await axios.post(`${BACKEND_URL}/jobapplications`, {
         company_name,
         job_title,
         job_description,
         resume_id,
+        user_auth0_user_id: user.sub,
       });
+      setSubmissionStatus(true);
 
       console.log("Response from backend:", response.data);
       if (response.data && response.data.customizedResume) {
@@ -58,9 +67,12 @@ const JDForm = ({ setResumeResponse }) => {
     }
 
     // Reset form fields
+    setIsLoading(false); // Set loading to false when request is complete
+
     setcompanyName("");
     setjobTitle("");
     setjobDescription("");
+    setSubmissionStatus(false); // Reset submission status
   };
 
   return (
@@ -99,9 +111,16 @@ const JDForm = ({ setResumeResponse }) => {
         </div>
 
         <div className="form-field">
-          <input type="submit" value="Submit" />
+          <input type="submit" value="Submit" disabled={isLoading} />
+          {isLoading && <div>Loading...</div>} {/* Loading indicator */}
         </div>
       </form>
+      {/* Conditionally display submission message */}
+      {submissionStatus && (
+        <div className="submission-message">
+          Your JD has been submitted successfully.
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,5 @@
 // import React, { useState } from "react";
-// import axios from "axios";
-// import { BACKEND_URL } from "../constants";
+
 // import { useAuth0 } from "@auth0/auth0-react";
 
 // const ResumeForm = ({ onFormSubmit }) => {
@@ -27,16 +26,9 @@
 //     }
 
 //     try {
-//       const response = await axios.post(`${BACKEND_URL}/resumes`, {
-//         resume_content: resumeContent,
-//         user_auth0_user_id: user.sub,
-//       });
-
+//       await onFormSubmit({ resume_content: resumeContent });
 //       setResumeContent("");
-//       onFormSubmit();
-//       setFeedbackMessage(
-//         response.data.message || "Resume submitted successfully."
-//       );
+//       setFeedbackMessage("Resume submitted successfully.");
 //       setIsError(false);
 //     } catch (err) {
 //       console.error(err);
@@ -77,15 +69,20 @@
 // };
 
 // export default ResumeForm;
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 
 import { useAuth0 } from "@auth0/auth0-react";
 
-const ResumeForm = ({ onFormSubmit }) => {
+const ResumeForm = ({ onFormSubmit, initialData, onContentChange }) => {
   const [resumeContent, setResumeContent] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  // Update local state when initialData changes
+  useEffect(() => {
+    setResumeContent(initialData);
+  }, [initialData]);
 
   const handleChange = (event) => {
     setResumeContent(event.target.value);
@@ -121,7 +118,7 @@ const ResumeForm = ({ onFormSubmit }) => {
 
   return (
     <div className="add-resume-form">
-      <h2>Add Resume</h2>
+      <h2>{initialData ? "Edit Resume" : "Add Resume"}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-field">
           <label>Resume Content:</label>
@@ -134,7 +131,9 @@ const ResumeForm = ({ onFormSubmit }) => {
         </div>
 
         <div className="form-field">
-          <button type="submit">Submit</button>
+          <button type="submit">
+            {initialData ? "Save Changes" : "Submit"}
+          </button>
         </div>
 
         {feedbackMessage && (
